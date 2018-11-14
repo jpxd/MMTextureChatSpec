@@ -29,7 +29,7 @@ class MessageVideoNode : ASDisplayNode{
         self.videoURL = url
         videoNode.backgroundColor = UIColor.lightGray
         videoNode.style.preferredSize = CGSize(width: 210, height: 150)
-        videoNode.gravity = AVLayerVideoGravityResizeAspectFill
+        videoNode.gravity = AVLayerVideoGravity.resizeAspectFill.rawValue
         
         playBut = ASButtonNode()
         playBut.style.preferredSize = CGSize(width: 50, height: 50)
@@ -59,7 +59,7 @@ class MessageVideoNode : ASDisplayNode{
         
         
         
-        let insets = UIEdgeInsetsMake(0, 0, 0, 0)
+        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         let insetSpec = ASInsetLayoutSpec(insets: insets, child: verticalSpec)
         
         let overlay = ASOverlayLayoutSpec(child: insetSpec, overlay: playBut)

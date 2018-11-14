@@ -69,7 +69,7 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
 
     
     
-    func endEdit(){
+    @objc func endEdit(){
         self.view.endEditing(true)
     }
     
@@ -117,13 +117,13 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
         textView.layer.borderWidth = 0.4
         textView.layer.cornerRadius = 4
         textView.delegate = self
-        textView.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
+        textView.font = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body)
         
         
         self.inputToolbar.setItems([self.picture, ToolbarItem(customView: self.textView) , self.sendBut], animated: false)
         self.inputToolbar.maximumHeight = 200
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         keyBoardTap = UITapGestureRecognizer(target: self, action:  #selector(endEdit))
         self.view.addGestureRecognizer(keyBoardTap)
@@ -133,7 +133,7 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
         
         //frame set
         self.collectionView?.frame = CGRect(0,0,view.bounds.width , view.bounds.height );
-        self.view.bringSubview(toFront: inputToolbar)
+        self.view.bringSubviewToFront(inputToolbar)
         if let coll = collectionView?.view{
             coll.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 80, right: 0)
             coll.keyboardDismissMode = .onDrag
@@ -253,11 +253,11 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
     
     
     // MARK: - UITextViewDelegate
-    final func keyboardWillShow(notification: Notification) {
+    @objc final func keyboardWillShow(notification: Notification) {
         moveToolbar(up: true, notification: notification)
     }
     
-    final func keyboardWillHide(notification: Notification) {
+    @objc final func keyboardWillHide(notification: Notification) {
         moveToolbar(up: false, notification: notification)
     }
     
@@ -265,8 +265,8 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
         guard let userInfo = notification.userInfo else {
             return
         }
-        let animationDuration: TimeInterval = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
-        let keyboardHeight = up ? -(userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue.height : 0
+        let animationDuration: TimeInterval = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
+        let keyboardHeight = up ? -(userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue.height : 0
         
         // Animation
         self.toolbarBottomConstraint?.constant = keyboardHeight
@@ -292,7 +292,7 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
                 textView.removeConstraint(constraint)
             }
             self.constraint = textView.heightAnchor.constraint(equalToConstant: size.height)
-            self.constraint?.priority = UILayoutPriorityDefaultHigh
+            self.constraint?.priority = UILayoutPriority.defaultHigh
             self.constraint?.isActive = true
             
             
@@ -382,7 +382,7 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
         
         
         let attr = NSMutableAttributedString(attributedString: textView.attributedText)
-        attr.removeAttribute(NSLinkAttributeName, range: range)
+        attr.removeAttribute(NSAttributedString.Key.link, range: range)
         if(bool){
             attr.replaceCharacters(in: range, with: "")
         }
@@ -401,7 +401,7 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
             attr.enumerateAttributes( in: NSMakeRange(0, attr.length), options: NSAttributedString.EnumerationOptions.longestEffectiveRangeNotRequired, using: { (dict, range, bool) in
                 
                 for (key , _) in dict{
-                    if(key == NSLinkAttributeName){
+                    if(key == NSAttributedString.Key.link){
                         
                         var user = userIds[i]
                         
@@ -421,14 +421,14 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
     func formatTextInTextView(textView: UITextView) {
         
         
-        textView.linkTextAttributes = [NSForegroundColorAttributeName : UIColor.blue , NSUnderlineStyleAttributeName : NSUnderlineStyle.styleNone.rawValue]
-        textView.attributedText = NSAttributedString(string: textView.text, attributes: [NSFontAttributeName : UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)])
+        textView.linkTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.blue , NSAttributedString.Key.underlineStyle : []]
+        textView.attributedText = NSAttributedString(string: textView.text, attributes: [NSAttributedString.Key.font : UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body)])
         
         let attr = NSMutableAttributedString(attributedString: textView.attributedText)
         
         for user in userIds{
             for (key,value) in user{
-                attr.addAttribute(NSLinkAttributeName, value: key, range: value)
+                attr.addAttribute(NSAttributedString.Key.link, value: key, range: value)
                 
             }
         }
@@ -449,7 +449,7 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
                 
                 
                 
-                if let textRange = textView.tokenizer.rangeEnclosingPosition(end, with: UITextGranularity.word, inDirection: UITextLayoutDirection.left.rawValue){
+                if let textRange = textView.tokenizer.rangeEnclosingPosition(end, with: UITextGranularity.word, inDirection: UITextDirection(rawValue: UITextLayoutDirection.left.rawValue)){
                     if let wordTyped = textView.text(in: textRange){
                         print(wordTyped)
                         
@@ -571,7 +571,7 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
     
     
     //MARK: - Camera
-    func didPressAccessoryButton() {
+    @objc func didPressAccessoryButton() {
         
         photo = MBPhotoPicker()
         photo?.disableEntitlements = true
@@ -604,7 +604,7 @@ open class ChatAsyncViewController: UIViewController ,UITextViewDelegate , ChatD
     }
     
     //MARK: - Send
-    func sendPressed(){
+    @objc func sendPressed(){
         if let textView = self.textView {
             //            print(textView.attributedText)
             

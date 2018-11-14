@@ -23,8 +23,9 @@ private func ==(lhs: MessageProperties, rhs: MessageProperties) -> Bool {
     return lhs.hashValue == rhs.hashValue
 }
 
-private let kDefaultIncomingColor = UIColor(red: 239 / 255, green: 237 / 255, blue: 237 / 255, alpha: 1)
-private let kDefaultOutgoingColor = UIColor(red: 17 / 255, green: 107 / 255, blue: 254 / 255, alpha: 1)
+
+public let kDefaultIncomingColor = UIColor(red: 239 / 255, green: 237 / 255, blue: 237 / 255, alpha: 1)
+public let kDefaultOutgoingColor = UIColor(red: 17 / 255, green: 107 / 255, blue: 254 / 255, alpha: 1)
 
 public class MessageBubbleImageProvider {
     
@@ -74,7 +75,7 @@ public class MessageBubbleImageProvider {
          print(bubble.size)
         // make image stretchable from center point
         let center = CGPoint(x: bubble.size.width / 2.0, y: bubble.size.height / 2.0)
-        let capInsets = UIEdgeInsetsMake(center.y, center.x, center.y, center.x);
+        let capInsets = UIEdgeInsets(top: center.y, left: center.x, bottom: center.y, right: center.x);
         
         normalBubble = MessageBubbleImageProvider.stretchableImage(normalBubble, capInsets: capInsets)
         return normalBubble

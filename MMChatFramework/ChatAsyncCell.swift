@@ -12,16 +12,16 @@ import AsyncDisplayKit
 
 public let kAMMessageCellNodeAvatarImageSize: CGFloat = 24
 
-public let kAMMessageCellNodeTopTextAttributes = [NSForegroundColorAttributeName: UIColor.lightGray,
-                                                  NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12)]
-public let kAMMessageCellNodeContentTopTextAttributes = [NSForegroundColorAttributeName: UIColor.lightGray,
-                                                         NSFontAttributeName:UIFont.preferredFont(forTextStyle: UIFontTextStyle.footnote)]
-public let kAMMessageCellNodeBottomTextAttributes = [NSForegroundColorAttributeName: UIColor.lightGray,
-                                                     NSFontAttributeName: UIFont.preferredFont(forTextStyle: UIFontTextStyle.caption2)]
-public let kAMMessageCellNodeBubbleAttributes = [NSForegroundColorAttributeName: UIColor.black,
-                                                         NSFontAttributeName:UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)]
-public let kAMMessageCellNodeCaptionTextAttributes = [NSForegroundColorAttributeName: UIColor.black,
-                                                     NSFontAttributeName: UIFont.preferredFont(forTextStyle: UIFontTextStyle.caption2)]
+public let kAMMessageCellNodeTopTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.lightGray,
+                                                  NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)]
+public let kAMMessageCellNodeContentTopTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.lightGray,
+                                                         NSAttributedString.Key.font:UIFont.preferredFont(forTextStyle: UIFont.TextStyle.footnote)]
+public let kAMMessageCellNodeBottomTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.lightGray,
+                                                     NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: UIFont.TextStyle.caption2)]
+public let kAMMessageCellNodeBubbleAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black,
+                                                 NSAttributedString.Key.font:UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body)]
+public let kAMMessageCellNodeCaptionTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black,
+                                                      NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: UIFont.TextStyle.caption2)]
 
 
 @objc protocol ChatDelegate{
@@ -60,7 +60,7 @@ class ChatAsyncCell: ASCellNode,ASVideoNodeDelegate {
     }
 
     
-    func handleZoomTap() {
+    @objc func handleZoomTap() {
     
         if(delegate != nil){
             if let msg = message{
@@ -72,7 +72,7 @@ class ChatAsyncCell: ASCellNode,ASVideoNodeDelegate {
     }
     
     
-    func handleUserTap() {
+    @objc func handleUserTap() {
     
         if(delegate != nil){
             if let msg = message{
@@ -137,7 +137,7 @@ class ChatAsyncCell: ASCellNode,ASVideoNodeDelegate {
                         
             topTextNode?.attributedText = NSAttributedString(string: stamp, attributes: kAMMessageCellNodeTopTextAttributes)
             topTextNode?.style.alignSelf = .center
-            topTextNode?.textContainerInset = UIEdgeInsetsMake(10, 0, 10, 0)
+            topTextNode?.textContainerInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
             
         }else{
             topTextNode = nil
@@ -149,7 +149,7 @@ class ChatAsyncCell: ASCellNode,ASVideoNodeDelegate {
         if let time = message?.timestamp{
             bottomTextNode = ASTextNode()
             bottomTextNode?.attributedText = NSAttributedString(string: time, attributes: kAMMessageCellNodeBottomTextAttributes)
-            bottomTextNode?.textContainerInset = UIEdgeInsetsMake(6, 0, 6, 0)
+            bottomTextNode?.textContainerInset = UIEdgeInsets(top: 6, left: 0, bottom: 6, right: 0)
             
         }else{
             bottomTextNode = nil
@@ -229,7 +229,7 @@ class ChatAsyncCell: ASCellNode,ASVideoNodeDelegate {
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         
         
-        let contentTopFinal : ASLayoutSpec? = message?.name == nil ? nil : ASInsetLayoutSpec(insets: UIEdgeInsetsMake(0, 20 + 24, 0, 0), child: contentTopTextNode!)
+        let contentTopFinal : ASLayoutSpec? = message?.name == nil ? nil : ASInsetLayoutSpec(insets: UIEdgeInsets(top: 0, left: 20 + 24, bottom: 0, right: 0), child: contentTopTextNode!)
 
         let horizontalSpec = ASStackLayoutSpec()
         horizontalSpec.style.width = ASDimensionMakeWithPoints(constrainedSize.max.width)
@@ -291,7 +291,7 @@ class ChatAsyncCell: ASCellNode,ASVideoNodeDelegate {
             
         }
         
-        let insetSpec = ASInsetLayoutSpec(insets: isOutgoing ? UIEdgeInsetsMake(1, 32, 5, 4) : UIEdgeInsetsMake(1, 4, 5, 32), child: verticalSpec)
+        let insetSpec = ASInsetLayoutSpec(insets: isOutgoing ? UIEdgeInsets(top: 1, left: 32, bottom: 5, right: 4) : UIEdgeInsets(top: 1, left: 4, bottom: 5, right: 32), child: verticalSpec)
 
         if let _ = message?.sectionStamp{
             let stackLay = ASStackLayoutSpec(direction: ASStackLayoutDirection.vertical, spacing: 0, justifyContent: ASStackLayoutJustifyContent.start, alignItems: ASStackLayoutAlignItems.start, children: [topTextNode! , insetSpec])
